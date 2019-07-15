@@ -118,7 +118,7 @@ public class DatabaseMovie extends Dao {
         //
         try {
             //
-            b = db.update(TABLE_NAME, createValues(model), ID + "=?", new String[]{model.getId()}) > 0;
+            b = db.update(TABLE_NAME, createValuesWithID(model), ID + "=?", new String[]{model.getId()}) > 0;
             db.setTransactionSuccessful();
         } catch (Exception e) {
             log("edit", e);
