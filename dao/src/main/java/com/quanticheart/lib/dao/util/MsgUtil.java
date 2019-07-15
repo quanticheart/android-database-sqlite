@@ -31,62 +31,24 @@
  *  *        |/_/         \===/
  *  *                       =
  *  *
- *  * Copyright(c) Developed by John Alves at 2019/7/14 at 5:51:58 for quantic heart studios
+ *  * Copyright(c) Developed by John Alves at 2019/7/15 at 7:15:54 for quantic heart studios
  *
  */
 
-package com.quanticheart.lib.dao.db;
+package com.quanticheart.lib.dao.util;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+import com.quanticheart.lib.dao.DatabaseMovie;
 
-import static com.quanticheart.lib.dao.constants.contants.*;
-import static com.quanticheart.lib.dao.util.MsgUtil.log;
-
-class SQLiteHelper extends SQLiteOpenHelper {
-
-    SQLiteHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        createDatabase(db);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onCreate(db);
-    }
+public class MsgUtil {
 
     /**
-     * Create database
+     * show simple msg in log
      *
-     * @param db for create
+     * @param title for init log msg
+     * @param e     for get error msg
      */
-    private boolean createDatabase(SQLiteDatabase db) {
-        boolean b = false;
-        try {
-            String sb = ("CREATE TABLE IF NOT EXISTS [" + TABLE_NAME + "] (\n" +
-                    "  [" + ID + "] INTEGER, \n" +
-                    "  [" + TITLE + "] TEXT, \n" +
-                    "  [" + DECS + "] TEXT, \n" +
-                    "  [" + RATING + "] TEXT, \n" +
-                    "  CONSTRAINT [] PRIMARY KEY ([" + ID + "]));") +
-                    "";
-            String[] comandos = sb // for more Tables ;)
-                    .split(";");
-
-            for (String comando : comandos) {
-                db.execSQL(comando.toLowerCase());
-            }
-
-            b = true;
-        } catch (Exception e) {
-            log("create table", e);
-        }
-        return b;
+    public static void log(String title, Exception e) {
+        Log.w(DatabaseMovie.class.getSimpleName() + ": Error " + title, e);
     }
-
 }

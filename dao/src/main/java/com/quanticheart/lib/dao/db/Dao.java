@@ -50,8 +50,10 @@ public class Dao {
         this.context = context;
     }
 
+    SQLiteHelper helper = null;
+
     protected void openDataBase() {
-        SQLiteHelper helper = new SQLiteHelper(context);
+        helper = new SQLiteHelper(context);
         this.db = helper.getWritableDatabase();
     }
 
@@ -60,4 +62,5 @@ public class Dao {
             db.close();
         }
     }
+
 }

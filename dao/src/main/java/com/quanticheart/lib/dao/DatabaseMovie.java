@@ -40,7 +40,6 @@ package com.quanticheart.lib.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import com.quanticheart.lib.dao.db.Dao;
 import com.quanticheart.lib.dao.model.BestMovieModel;
 import com.quanticheart.lib.dao.security.Encrypt;
@@ -48,6 +47,7 @@ import com.quanticheart.lib.dao.security.Encrypt;
 import java.util.ArrayList;
 
 import static com.quanticheart.lib.dao.constants.contants.*;
+import static com.quanticheart.lib.dao.util.MsgUtil.log;
 
 @SuppressWarnings("unused")
 public class DatabaseMovie extends Dao {
@@ -196,6 +196,23 @@ public class DatabaseMovie extends Dao {
         boolean b = false;
         openDataBase();
         try {
+            b = db.delete(TABLE_NAME, null, null) > 0;
+        } catch (Exception e) {
+            log("delete table", e);
+        }
+        closeDataBase();
+        return b;
+    }
+
+    /**
+     * delete table
+     *
+     * @return destroy is success
+     */
+    public boolean deleteTable() {
+        boolean b = false;
+        openDataBase();
+        try {
             String[] comandos = ("DROP TABLE IF EXISTS " + TABLE_NAME + ";").split(";");
             for (String comando : comandos) {
                 db.execSQL(comando.toLowerCase());
@@ -205,6 +222,36 @@ public class DatabaseMovie extends Dao {
             log("delete table", e);
         }
         closeDataBase();
+        return b;
+    }
+
+    /**
+     * Create database
+     *
+     * @return create table is success
+     */
+    private boolean createTable() {
+        boolean b = false;
+        openDataBase();
+        try {
+            String sb = ("CREATE TABLE IF NOT EXISTS [" + TABLE_NAME + "] (\n" +
+                    "  [" + ID + "] INTEGER, \n" +
+                    "  [" + TITLE + "] TEXT, \n" +
+                    "  [" + DECS + "] TEXT, \n" +
+                    "  [" + RATING + "] TEXT, \n" +
+                    "  CONSTRAINT [] PRIMARY KEY ([" + ID + "]));") +
+                    "";
+            String[] comandos = sb // for more Tables ;)
+                    .split(";");
+
+            for (String comando : comandos) {
+                db.execSQL(comando.toLowerCase());
+            }
+            closeDataBase();
+            b = true;
+        } catch (Exception e) {
+            log("create table", e);
+        }
         return b;
     }
 
@@ -261,17 +308,6 @@ public class DatabaseMovie extends Dao {
         }
     }
 
-
-    /**
-     * show simple msg in log
-     *
-     * @param title for init log msg
-     * @param e     for get error msg
-     */
-    private void log(String title, Exception e) {
-        Log.w(DatabaseMovie.class.getSimpleName() + ": Error " + title, e);
-    }
-
     /*
      * insert init list
      */
@@ -283,6 +319,7 @@ public class DatabaseMovie extends Dao {
 
     /**
      * create list for list
+     *
      * @param listType type for create list
      * @return list with data
      */
@@ -304,6 +341,7 @@ public class DatabaseMovie extends Dao {
 
     /**
      * fake list
+     *
      * @param list list to add
      */
     private void addBigList(ArrayList<BestMovieModel> list) {
@@ -316,6 +354,7 @@ public class DatabaseMovie extends Dao {
 
     /**
      * fake list
+     *
      * @param list list to add
      */
     private void addLittleList(ArrayList<BestMovieModel> list) {
