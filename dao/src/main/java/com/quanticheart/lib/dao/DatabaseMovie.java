@@ -43,6 +43,7 @@ import android.database.Cursor;
 import android.util.Log;
 import com.quanticheart.lib.dao.db.Dao;
 import com.quanticheart.lib.dao.model.BestMovieModel;
+import com.quanticheart.lib.dao.security.Encrypt;
 
 import java.util.ArrayList;
 
@@ -50,6 +51,12 @@ import static com.quanticheart.lib.dao.constants.contants.*;
 
 @SuppressWarnings("unused")
 public class DatabaseMovie extends Dao {
+
+    /**
+     * boolean if encrypt or not in access database
+     */
+
+    private boolean encrypt = false;
 
     /**
      * Constructor
@@ -61,18 +68,31 @@ public class DatabaseMovie extends Dao {
     }
 
     /**
+     * Constructor
+     *
+     * @param context for init Dao
+     * @param encrypt for encrypt data
+     */
+    public DatabaseMovie(Context context, Boolean encrypt) {
+        super(context);
+        this.encrypt = encrypt;
+    }
+
+    /**
      * Insert new movie in data base
      *
      * @param model data movie
+     * @return is success
      */
-    public void addMovie(BestMovieModel model) {
+    public boolean addMovie(BestMovieModel model) {
+        boolean b = false;
         openDataBase();
         //
         db.beginTransaction();
         //
         try {
             //
-            db.insert(TABLE_NAME, null, createValues(model));
+            b = db.insert(TABLE_NAME, null, createValues(model)) > 0;
             db.setTransactionSuccessful();
         } catch (Exception e) {
             log("insert", e);
@@ -81,21 +101,24 @@ public class DatabaseMovie extends Dao {
         }
         //
         closeDataBase();
+        return b;
     }
 
     /**
      * update movie in data base
      *
      * @param model data movie
+     * @return is success
      */
-    public void editMovie(BestMovieModel model) {
+    public boolean editMovie(BestMovieModel model) {
+        boolean b = false;
         openDataBase();
         //
         db.beginTransaction();
         //
         try {
             //
-            db.update(TABLE_NAME, createValues(model), ID + "=?", new String[]{model.getId()});
+            b = db.update(TABLE_NAME, createValues(model), ID + "=?", new String[]{model.getId()}) > 0;
             db.setTransactionSuccessful();
         } catch (Exception e) {
             log("edit", e);
@@ -104,6 +127,7 @@ public class DatabaseMovie extends Dao {
         }
         //
         closeDataBase();
+        return b;
     }
 
     /**
@@ -112,7 +136,7 @@ public class DatabaseMovie extends Dao {
      * @param movieID for delete in table
      * @return is success
      */
-    public Boolean deleteMovie(String movieID) {
+    public boolean deleteMovie(String movieID) {
         boolean b = false;
         openDataBase();
         //
@@ -163,6 +187,27 @@ public class DatabaseMovie extends Dao {
         return null;
     }
 
+    /**
+     * clean table
+     *
+     * @return clean is success
+     */
+    public boolean cleanTable() {
+        boolean b = false;
+        openDataBase();
+        try {
+            String[] comandos = ("DROP TABLE IF EXISTS " + TABLE_NAME + ";").split(";");
+            for (String comando : comandos) {
+                db.execSQL(comando.toLowerCase());
+            }
+            b = true;
+        } catch (Exception e) {
+            log("delete table", e);
+        }
+        closeDataBase();
+        return b;
+    }
+
     //==============================================================================================
     //
     // ** Utils
@@ -184,6 +229,45 @@ public class DatabaseMovie extends Dao {
         return data;
     }
 
+    /*
+     * Encrypt e Decrypt code
+     */
+
+    /**
+     * Encrypt text for database
+     *
+     * @param text for encrypt
+     * @return text or text encrypted
+     */
+    private String encrypt(String text) {
+        if (encrypt) {
+            return Encrypt.md5(text);
+        } else {
+            return text;
+        }
+    }
+
+    /**
+     * Decrypt text for return
+     *
+     * @param base64 for decode
+     * @return text or text decoded
+     */
+    private String decrypt(String base64) {
+        if (encrypt) {
+            return Encrypt.md5Decode(base64);
+        } else {
+            return base64;
+        }
+    }
+
+
+    /**
+     * show simple msg in log
+     *
+     * @param title for init log msg
+     * @param e     for get error msg
+     */
     private void log(String title, Exception e) {
         Log.w(DatabaseMovie.class.getSimpleName() + ": Error " + title, e);
     }
