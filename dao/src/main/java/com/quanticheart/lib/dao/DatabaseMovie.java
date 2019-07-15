@@ -110,18 +110,21 @@ public class DatabaseMovie extends Dao {
      * Delete moview in data base
      *
      * @param movieID for delete in table
+     * @return is success
      */
-    public void deleteMovie(String movieID) {
+    public Boolean deleteMovie(String movieID) {
+        boolean b = false;
         openDataBase();
         //
         try {
             //
-            db.delete(TABLE_NAME, ID + "=?", new String[]{movieID});
+            b = db.delete(TABLE_NAME, ID + "=?", new String[]{movieID}) > 0;
         } catch (Exception e) {
             log("delete", e);
         }
         //
         closeDataBase();
+        return b;
     }
 
     /**
