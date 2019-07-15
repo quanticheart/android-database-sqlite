@@ -167,10 +167,10 @@ public class DatabaseMovie extends Dao {
 
             while (cursor.moveToNext()) {
                 BestMovieModel model = new BestMovieModel(
-                        cursor.getString(cursor.getColumnIndex(ID)),
-                        cursor.getString(cursor.getColumnIndex(TITLE)),
-                        cursor.getString(cursor.getColumnIndex(DECS)),
-                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(RATING)))
+                        String.valueOf(cursor.getInt(cursor.getColumnIndex(ID))),
+                        decrypt(cursor.getString(cursor.getColumnIndex(TITLE))),
+                        decrypt(cursor.getString(cursor.getColumnIndex(DECS))),
+                        Float.parseFloat(decrypt(cursor.getString(cursor.getColumnIndex(RATING))))
                 );
                 list.add(model);
             }
@@ -222,9 +222,9 @@ public class DatabaseMovie extends Dao {
      */
     private ContentValues createValues(BestMovieModel model) {
         ContentValues data = new ContentValues();
-        data.put(TITLE, model.getTitleMovie());
-        data.put(DECS, model.getLitleDescMovie());
-        data.put(RATING, model.getRattingMovie().toString());
+        data.put(TITLE, encrypt(model.getTitleMovie()));
+        data.put(DECS, encrypt(model.getLitleDescMovie()));
+        data.put(RATING, encrypt(model.getRattingMovie().toString()));
 
         return data;
     }
@@ -270,5 +270,59 @@ public class DatabaseMovie extends Dao {
      */
     private void log(String title, Exception e) {
         Log.w(DatabaseMovie.class.getSimpleName() + ": Error " + title, e);
+    }
+
+    /*
+     * insert init list
+     */
+
+    @SuppressWarnings("WeakerAccess")
+    public static final int LITTLE_LIST = 0;
+    @SuppressWarnings("WeakerAccess")
+    public static final int LONG_LIST = 1;
+
+    /**
+     * create list for list
+     * @param listType type for create list
+     * @return list with data
+     */
+    public ArrayList<BestMovieModel> createInitList(int listType) {
+
+        ArrayList<BestMovieModel> list = new ArrayList<>();
+
+        if (listType == LITTLE_LIST) {
+            addLittleList(list);
+        }
+
+        if (listType == LONG_LIST) {
+            addLittleList(list);
+            addBigList(list);
+        }
+
+        return list;
+    }
+
+    /**
+     * fake list
+     * @param list list to add
+     */
+    private void addBigList(ArrayList<BestMovieModel> list) {
+        list.add(new BestMovieModel("Spider-Man", "mysterio's Movie", 4.0f));
+        list.add(new BestMovieModel("Toy Store", "LiKE!!", 3.5f));
+        list.add(new BestMovieModel("Avengers", "Best Movie Ever", 5.0f));
+        list.add(new BestMovieModel("Goonies", "WOW!!!", 3.0f));
+        list.add(new BestMovieModel("X-men", "Best Movie", 3.0f));
+    }
+
+    /**
+     * fake list
+     * @param list list to add
+     */
+    private void addLittleList(ArrayList<BestMovieModel> list) {
+        list.add(new BestMovieModel("Star Wars", "Best Movie", 5.0f));
+        list.add(new BestMovieModel("Cars", "Cars Movie", 4.0f));
+        list.add(new BestMovieModel("Transformers", "WOW!!", 4.5f));
+        list.add(new BestMovieModel("Pets 2", "I like", 3.0f));
+        list.add(new BestMovieModel("Annabelle 3", "Like Movie", 2.5f));
     }
 }

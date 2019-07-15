@@ -54,7 +54,7 @@ class SQLiteHelper extends SQLiteOpenHelper {
 
         try {
             String sb = ("CREATE TABLE IF NOT EXISTS [" + TABLE_NAME + "] (\n" +
-                    "  [" + ID + "] TEXT, \n" +
+                    "  [" + ID + "] INTEGER, \n" +
                     "  [" + TITLE + "] TEXT, \n" +
                     "  [" + DECS + "] TEXT, \n" +
                     "  [" + RATING + "] TEXT, \n" +

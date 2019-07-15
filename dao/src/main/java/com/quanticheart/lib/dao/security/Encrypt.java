@@ -44,7 +44,7 @@ import java.nio.charset.StandardCharsets;
 @SuppressWarnings("unused")
 public class Encrypt {
 
-    private static String split = "::";
+    private static final String split = "::";
 
     public static String md5(String dataToEncrypt) {
         String base64;
@@ -63,6 +63,5 @@ public class Encrypt {
         String[] array = rawDecoded.split(split);
         return array[0];
     }
-
 
 }
