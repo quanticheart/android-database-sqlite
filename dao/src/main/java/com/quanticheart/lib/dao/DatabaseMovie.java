@@ -118,7 +118,7 @@ public class DatabaseMovie extends Dao {
         //
         try {
             //
-            b = db.update(TABLE_NAME, createValues(model), ID + "=?", new String[]{model.getId()}) > 0;
+            b = db.update(TABLE_NAME, createValuesWithID(model), ID + "=?", new String[]{model.getId()}) > 0;
             db.setTransactionSuccessful();
         } catch (Exception e) {
             log("edit", e);
@@ -269,6 +269,22 @@ public class DatabaseMovie extends Dao {
      */
     private ContentValues createValues(BestMovieModel model) {
         ContentValues data = new ContentValues();
+        data.put(TITLE, encrypt(model.getTitleMovie()));
+        data.put(DECS, encrypt(model.getLitleDescMovie()));
+        data.put(RATING, encrypt(model.getRattingMovie().toString()));
+
+        return data;
+    }
+
+    /**
+     * create content value for insert data base
+     *
+     * @param model datas for content values
+     * @return content
+     */
+    private ContentValues createValuesWithID(BestMovieModel model) {
+        ContentValues data = new ContentValues();
+        data.put(ID, encrypt(model.getId()));
         data.put(TITLE, encrypt(model.getTitleMovie()));
         data.put(DECS, encrypt(model.getLitleDescMovie()));
         data.put(RATING, encrypt(model.getRattingMovie().toString()));
