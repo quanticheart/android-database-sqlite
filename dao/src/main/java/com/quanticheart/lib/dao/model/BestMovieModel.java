@@ -43,15 +43,15 @@ public class BestMovieModel {
     private String id = "";
     private String titleMovie;
     private String litleDescMovie;
-    private Double rattingMovie;
+    private Float rattingMovie;
 
-    public BestMovieModel(String titleMovie, String litleDescMovie, Double rattingMovie) {
+    public BestMovieModel(String titleMovie, String litleDescMovie, Float rattingMovie) {
         this.titleMovie = titleMovie;
         this.litleDescMovie = litleDescMovie;
         this.rattingMovie = rattingMovie;
     }
 
-    public BestMovieModel(String id, String titleMovie, String litleDescMovie, Double rattingMovie) {
+    public BestMovieModel(String id, String titleMovie, String litleDescMovie, Float rattingMovie) {
         this.id = id;
         this.titleMovie = titleMovie;
         this.litleDescMovie = litleDescMovie;
@@ -82,11 +82,11 @@ public class BestMovieModel {
         this.litleDescMovie = litleDescMovie;
     }
 
-    public Double getRattingMovie() {
+    public Float getRattingMovie() {
         return rattingMovie;
     }
 
-    public void setRattingMovie(Double rattingMovie) {
+    public void setRattingMovie(Float rattingMovie) {
         this.rattingMovie = rattingMovie;
     }
 

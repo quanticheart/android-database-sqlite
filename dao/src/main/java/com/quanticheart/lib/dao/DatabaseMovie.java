@@ -143,7 +143,7 @@ public class DatabaseMovie extends Dao {
                         cursor.getString(cursor.getColumnIndex(ID)),
                         cursor.getString(cursor.getColumnIndex(TITLE)),
                         cursor.getString(cursor.getColumnIndex(DECS)),
-                        Double.parseDouble(cursor.getString(cursor.getColumnIndex(RATING)))
+                        Float.parseFloat(cursor.getString(cursor.getColumnIndex(RATING)))
                 );
                 list.add(model);
             }
