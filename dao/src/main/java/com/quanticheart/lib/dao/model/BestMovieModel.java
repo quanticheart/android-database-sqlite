@@ -37,8 +37,10 @@
 
 package com.quanticheart.lib.dao.model;
 
+import java.io.Serializable;
+
 @SuppressWarnings("unused")
-public class BestMovieModel {
+public class BestMovieModel implements Serializable {
 
     private String id = "";
     private String titleMovie;
