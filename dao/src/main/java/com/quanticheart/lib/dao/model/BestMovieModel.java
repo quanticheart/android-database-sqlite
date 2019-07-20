@@ -44,19 +44,19 @@ public class BestMovieModel implements Serializable {
 
     private String id = "";
     private String titleMovie;
-    private String litleDescMovie;
+    private String descriptionMovie;
     private Float rattingMovie;
 
-    public BestMovieModel(String titleMovie, String litleDescMovie, Float rattingMovie) {
+    public BestMovieModel(String titleMovie, String descriptionMovie, Float rattingMovie) {
         this.titleMovie = titleMovie;
-        this.litleDescMovie = litleDescMovie;
+        this.descriptionMovie = descriptionMovie;
         this.rattingMovie = rattingMovie;
     }
 
-    public BestMovieModel(String id, String titleMovie, String litleDescMovie, Float rattingMovie) {
+    public BestMovieModel(String id, String titleMovie, String descriptionMovie, Float rattingMovie) {
         this.id = id;
         this.titleMovie = titleMovie;
-        this.litleDescMovie = litleDescMovie;
+        this.descriptionMovie = descriptionMovie;
         this.rattingMovie = rattingMovie;
     }
 
@@ -76,12 +76,12 @@ public class BestMovieModel implements Serializable {
         this.titleMovie = titleMovie;
     }
 
-    public String getLitleDescMovie() {
-        return litleDescMovie;
+    public String getDescriptionMovie() {
+        return descriptionMovie;
     }
 
-    public void setLitleDescMovie(String litleDescMovie) {
-        this.litleDescMovie = litleDescMovie;
+    public void setDescriptionMovie(String descriptionMovie) {
+        this.descriptionMovie = descriptionMovie;
     }
 
     public Float getRattingMovie() {
@@ -97,7 +97,7 @@ public class BestMovieModel implements Serializable {
         return "BestMovieModel{" +
                 "id='" + id + '\'' +
                 ", titleMovie='" + titleMovie + '\'' +
-                ", litleDescMovie='" + litleDescMovie + '\'' +
+                ", descriptionMovie='" + descriptionMovie + '\'' +
                 ", rattingMovie=" + rattingMovie +
                 '}';
     }

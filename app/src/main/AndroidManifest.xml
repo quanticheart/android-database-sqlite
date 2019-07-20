@@ -37,6 +37,21 @@
   -->
 
 <manifest
+        xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android"
         package="com.quanticheart.lib.dao">
+
+    <application
+            android:allowBackup="false"
+            tools:ignore="GoogleAppIndexingWarning">
+
+    <activity
+            tools:ignore="InnerclassSeparator" android:name=".test">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
+    </application>
 
 </manifest>

@@ -31,59 +31,71 @@
  *  *        |/_/         \===/
  *  *                       =
  *  *
- *  * Copyright(c) Developed by John Alves at 2019/7/15 at 7:15:54 for quantic heart studios
+ *  * Copyright(c) Developed by John Alves at 2019/7/20 at 3:29:17 for quantic heart studios
  *
  */
 
-package com.quanticheart.lib.dao.util;
+package com.quanticheart.lib.dao;
 
-import android.util.Log;
-import com.quanticheart.lib.dao.BuildConfig;
-import com.quanticheart.lib.dao.DatabaseMovie;
+import com.quanticheart.lib.dao.model.BestMovieModel;
 
-public class MsgUtil {
+import java.util.ArrayList;
+
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class AutoCreate {
+
+    /*
+     * insert init list
+     */
+
+    static final int LITTLE_LIST = 0;
+    static final int LONG_LIST = 1;
 
     /**
-     * show simple msg in log
+     * create list for list
      *
-     * @param title for init log msg
-     * @param e     for get error msg
+     * @param listType type for create list
+     * @return list with data
      */
-    public static void log(String title, Exception e) {
-        if (BuildConfig.DEBUG)
-            Log.w(DatabaseMovie.class.getSimpleName() + ": Error " + title, e);
+    public static ArrayList<BestMovieModel> createInitList(int listType) {
+
+        ArrayList<BestMovieModel> list = new ArrayList<>();
+
+        if (listType == LITTLE_LIST) {
+            addLittleList(list);
+        }
+
+        if (listType == LONG_LIST) {
+            addLittleList(list);
+            addBigList(list);
+        }
+
+        return list;
     }
 
     /**
-     * show simple msg in log
+     * fake list
      *
-     * @param title for init log msg
-     * @param msg   Log msg
+     * @param list list to add
      */
-    public static void log(String title, String msg) {
-        if (BuildConfig.DEBUG)
-            Log.w(DatabaseMovie.class.getSimpleName() + ": Msg " + title, msg);
+    private static void addBigList(ArrayList<BestMovieModel> list) {
+        list.add(new BestMovieModel("Spider-Man", "mysterio's Movie", 4.0f));
+        list.add(new BestMovieModel("Toy Store", "LiKE!!", 3.5f));
+        list.add(new BestMovieModel("Avengers", "Best Movie Ever", 5.0f));
+        list.add(new BestMovieModel("Goonies", "WOW!!!", 3.0f));
+        list.add(new BestMovieModel("X-men", "Best Movie", 3.0f));
     }
 
     /**
-     * show simple msg in log
+     * fake list
      *
-     * @param title for init log msg
-     * @param msg   Log msg
+     * @param list list to add
      */
-    public static void logI(String title, String msg) {
-        if (BuildConfig.DEBUG)
-            Log.i(DatabaseMovie.class.getSimpleName() + ": Msg " + title, msg);
-    }
-
-    /**
-     * show simple msg in log
-     *
-     * @param title for init log msg
-     * @param msg   Log msg
-     */
-    public static void logE(String title, String msg) {
-        if (BuildConfig.DEBUG)
-            Log.e(DatabaseMovie.class.getSimpleName() + ": Msg " + title, msg);
+    private static void addLittleList(ArrayList<BestMovieModel> list) {
+        list.add(new BestMovieModel("Star Wars", "Best Movie", 5.0f));
+        list.add(new BestMovieModel("Cars", "Cars Movie", 4.0f));
+        list.add(new BestMovieModel("Transformers", "WOW!!", 4.5f));
+        list.add(new BestMovieModel("Pets 2", "I like", 3.0f));
+        list.add(new BestMovieModel("Annabelle 3", "Like Movie", 2.5f));
     }
 }

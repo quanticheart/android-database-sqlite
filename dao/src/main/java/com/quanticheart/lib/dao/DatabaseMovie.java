@@ -42,41 +42,55 @@ import android.content.Context;
 import android.database.Cursor;
 import com.quanticheart.lib.dao.db.Dao;
 import com.quanticheart.lib.dao.model.BestMovieModel;
-import com.quanticheart.lib.dao.security.Encrypt;
+import com.quanticheart.lib.dao.modelDatabase.createFunctionDatabase;
 
 import java.util.ArrayList;
 
 import static com.quanticheart.lib.dao.constants.contants.*;
+import static com.quanticheart.lib.dao.security.CryptoUtil.decrypt;
+import static com.quanticheart.lib.dao.security.CryptoUtil.encrypt;
 import static com.quanticheart.lib.dao.util.MsgUtil.log;
 
-@SuppressWarnings("unused")
-public class DatabaseMovie extends Dao {
+@SuppressWarnings({"unused", "UnusedReturnValue", "WeakerAccess", "SameParameterValue"})
+public class DatabaseMovie extends Dao implements createFunctionDatabase {
+
+    //==============================================================================================
+    //
+    // ** Constructor
+    //
+    //==============================================================================================
 
     /**
-     * boolean if encrypt or not in access database
+     * boolean if encryptData or not in access database
      */
 
-    private boolean encrypt = false;
+    protected boolean encryptData = false;
 
     /**
      * Constructor
      *
      * @param context for init Dao
      */
-    public DatabaseMovie(Context context) {
+    DatabaseMovie(Context context) {
         super(context);
     }
 
     /**
      * Constructor
      *
-     * @param context for init Dao
-     * @param encrypt for encrypt data
+     * @param context     for init Dao
+     * @param encryptData for encryptData data
      */
-    public DatabaseMovie(Context context, Boolean encrypt) {
+    DatabaseMovie(Context context, Boolean encryptData) {
         super(context);
-        this.encrypt = encrypt;
+        this.encryptData = encryptData;
     }
+
+    //==============================================================================================
+    //
+    // ** Insert
+    //
+    //==============================================================================================
 
     /**
      * Insert new movie in data base
@@ -84,7 +98,8 @@ public class DatabaseMovie extends Dao {
      * @param model data movie
      * @return is success
      */
-    public boolean addMovie(BestMovieModel model) {
+    @Override
+    public boolean insertMovie(BestMovieModel model) {
         boolean b = false;
         openDataBase();
         //
@@ -105,11 +120,47 @@ public class DatabaseMovie extends Dao {
     }
 
     /**
+     * Insert list of new movie in data base
+     *
+     * @param model data movie list
+     * @return is success
+     */
+    @Override
+    public boolean insertListMovie(ArrayList<BestMovieModel> model) {
+        boolean b = false;
+        openDataBase();
+        //
+        db.beginTransaction();
+        //
+        try {
+            //
+            for (BestMovieModel data : model) {
+                b = db.insert(TABLE_NAME, null, createValues(data)) > 0;
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            log("insert", e);
+        } finally {
+            db.endTransaction();
+        }
+        //
+        closeDataBase();
+        return b;
+    }
+
+    //==============================================================================================
+    //
+    // ** Update
+    //
+    //==============================================================================================
+
+    /**
      * update movie in data base
      *
      * @param model data movie
      * @return is success
      */
+    @Override
     public boolean editMovie(BestMovieModel model) {
         boolean b = false;
         openDataBase();
@@ -130,13 +181,20 @@ public class DatabaseMovie extends Dao {
         return b;
     }
 
+    //==============================================================================================
+    //
+    // ** Delete
+    //
+    //==============================================================================================
+
     /**
      * Delete moview in data base
      *
      * @param movieID for delete in table
      * @return is success
      */
-    public boolean deleteMovie(String movieID) {
+    @Override
+    public boolean deleteRowByID(String movieID) {
         boolean b = false;
         openDataBase();
         //
@@ -152,10 +210,71 @@ public class DatabaseMovie extends Dao {
     }
 
     /**
+     * delete Fisrt Row in database
+     *
+     * @return is success
+     */
+    @Override
+    public boolean deleteFirstRow() {
+        boolean b = false;
+        openDataBase();
+        Cursor cursor = db.query(TABLE_NAME, new String[]{ID}, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            String rowId = cursor.getString(cursor.getColumnIndex(ID));
+            b = db.delete(TABLE_NAME, ID + "=?", new String[]{rowId}) > 0;
+        }
+        closeDataBase(cursor);
+        return b;
+    }
+
+    /**
+     * delete Last Row in database
+     *
+     * @return is success
+     */
+    @Override
+    public boolean deleteLastRow() {
+        boolean b = false;
+        openDataBase();
+        Cursor cursor = db.query(TABLE_NAME, new String[]{ID}, null, null, null, null, null);
+        if (cursor.moveToLast()) {
+            String rowId = cursor.getString(cursor.getColumnIndex(ID));
+            b = db.delete(TABLE_NAME, ID + "=?", new String[]{rowId}) > 0;
+        }
+        closeDataBase(cursor);
+        return b;
+    }
+
+    /**
+     * delete Row at position in database
+     *
+     * @return is success
+     */
+    @Override
+    public boolean deleteRowAtPosition(int position) {
+        boolean b = false;
+        openDataBase();
+        Cursor cursor = db.query(TABLE_NAME, new String[]{ID}, null, null, null, null, null);
+        if (cursor.moveToPosition(position)) {
+            String rowId = cursor.getString(cursor.getColumnIndex(ID));
+            b = db.delete(TABLE_NAME, ID + "=?", new String[]{rowId}) > 0;
+        }
+        closeDataBase(cursor);
+        return b;
+    }
+
+    //==============================================================================================
+    //
+    // ** Get
+    //
+    //==============================================================================================
+
+    /**
      * get all list movie in data base
      *
      * @return ArrayList<BestMovieModel>
      */
+    @Override
     public ArrayList<BestMovieModel> getListMovies() {
 
         ArrayList<BestMovieModel> list = new ArrayList<>();
@@ -166,13 +285,10 @@ public class DatabaseMovie extends Dao {
             Cursor cursor = db.query(TABLE_NAME, new String[]{ID, TITLE, DECS, RATING}, null, null, null, null, null);
 
             while (cursor.moveToNext()) {
-                BestMovieModel model = new BestMovieModel(
-                        String.valueOf(cursor.getInt(cursor.getColumnIndex(ID))),
-                        decrypt(cursor.getString(cursor.getColumnIndex(TITLE))),
-                        decrypt(cursor.getString(cursor.getColumnIndex(DECS))),
-                        Float.parseFloat(decrypt(cursor.getString(cursor.getColumnIndex(RATING))))
-                );
-                list.add(model);
+                BestMovieModel model = getMovie(cursor);
+                if (model != null) {
+                    list.add(model);
+                }
             }
 
             cursor.close();
@@ -188,10 +304,91 @@ public class DatabaseMovie extends Dao {
     }
 
     /**
+     * get movie in data base
+     *
+     * @param movieID for get in table
+     * @return is success
+     */
+    @Override
+    public BestMovieModel getRowByID(String movieID) {
+        openDataBase();
+        BestMovieModel model = null;
+        Cursor cursor = db.query(TABLE_NAME, null, ID + "=?", new String[]{movieID}, null, null, null);
+        try {
+            if (cursor.moveToNext()) {
+                model = getMovie(cursor);
+            }
+        } catch (Exception e) {
+            log("get by id", e);
+        }
+        //
+        closeDataBase(cursor);
+        return model;
+    }
+
+    /**
+     * get Fisrt Row in database
+     *
+     * @return is success
+     */
+    @Override
+    public BestMovieModel getFirstRow() {
+        openDataBase();
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+        BestMovieModel model = null;
+        if (cursor.moveToFirst()) {
+            model = getMovie(cursor);
+        }
+        closeDataBase(cursor);
+        return model;
+    }
+
+    /**
+     * get Last Row in database
+     *
+     * @return is success
+     */
+    @Override
+    public BestMovieModel getLastRow() {
+        openDataBase();
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+        BestMovieModel model = null;
+        if (cursor.moveToLast()) {
+            model = getMovie(cursor);
+        }
+        closeDataBase(cursor);
+        return model;
+    }
+
+    /**
+     * get  Row in position at database
+     *
+     * @return is success
+     */
+    @Override
+    public BestMovieModel getRowAtPosition(int position) {
+        openDataBase();
+        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+        BestMovieModel model = null;
+        if (cursor.moveToPosition(position)) {
+            model = getMovie(cursor);
+        }
+        closeDataBase(cursor);
+        return model;
+    }
+
+    //==============================================================================================
+    //
+    // ** Table Utils
+    //
+    //==============================================================================================
+
+    /**
      * clean table
      *
      * @return clean is success
      */
+    @Override
     public boolean cleanTable() {
         boolean b = false;
         openDataBase();
@@ -209,6 +406,7 @@ public class DatabaseMovie extends Dao {
      *
      * @return destroy is success
      */
+    @Override
     public boolean deleteTable() {
         boolean b = false;
         openDataBase();
@@ -230,7 +428,8 @@ public class DatabaseMovie extends Dao {
      *
      * @return create table is success
      */
-    private boolean createTable() {
+    @Override
+    public boolean createTable() {
         boolean b = false;
         openDataBase();
         try {
@@ -269,99 +468,41 @@ public class DatabaseMovie extends Dao {
      */
     private ContentValues createValues(BestMovieModel model) {
         ContentValues data = new ContentValues();
-        data.put(TITLE, encrypt(model.getTitleMovie()));
-        data.put(DECS, encrypt(model.getLitleDescMovie()));
-        data.put(RATING, encrypt(model.getRattingMovie().toString()));
+        data.put(TITLE, encrypt(encryptData, model.getTitleMovie()));
+        data.put(DECS, encrypt(encryptData, model.getDescriptionMovie()));
+        data.put(RATING, encrypt(encryptData, model.getRattingMovie().toString()));
 
         return data;
     }
 
-    /*
-     * Encrypt e Decrypt code
-     */
-
     /**
-     * Encrypt text for database
+     * get and verify movie in database
      *
-     * @param text for encrypt
-     * @return text or text encrypted
+     * @param cursor create in parent function for get movie in data base
+     * @return BestMovieModel with data
      */
-    private String encrypt(String text) {
-        if (encrypt) {
-            return Encrypt.md5(text);
-        } else {
-            return text;
+    private BestMovieModel getMovie(Cursor cursor) {
+        BestMovieModel model = null;
+        try {
+            model = new BestMovieModel(
+                    String.valueOf(cursor.getInt(cursor.getColumnIndex(ID))),
+                    decrypt(encryptData, cursor.getString(cursor.getColumnIndex(TITLE))),
+                    decrypt(encryptData, cursor.getString(cursor.getColumnIndex(DECS))),
+                    Float.parseFloat(decrypt(encryptData, cursor.getString(cursor.getColumnIndex(RATING)))));
+        } catch (Exception e) {
+            log("Get Data in table error", e);
         }
+        return model;
     }
 
-    /**
-     * Decrypt text for return
-     *
-     * @param base64 for decode
-     * @return text or text decoded
-     */
-    private String decrypt(String base64) {
-        if (encrypt) {
-            return Encrypt.md5Decode(base64);
-        } else {
-            return base64;
-        }
-    }
+    //==============================================================================================
+    //
+    // ** Auto Create
+    //
+    //==============================================================================================
 
-    /*
-     * insert init list
-     */
-
-    @SuppressWarnings("WeakerAccess")
-    public static final int LITTLE_LIST = 0;
-    @SuppressWarnings("WeakerAccess")
-    public static final int LONG_LIST = 1;
-
-    /**
-     * create list for list
-     *
-     * @param listType type for create list
-     * @return list with data
-     */
-    public ArrayList<BestMovieModel> createInitList(int listType) {
-
-        ArrayList<BestMovieModel> list = new ArrayList<>();
-
-        if (listType == LITTLE_LIST) {
-            addLittleList(list);
-        }
-
-        if (listType == LONG_LIST) {
-            addLittleList(list);
-            addBigList(list);
-        }
-
-        return list;
-    }
-
-    /**
-     * fake list
-     *
-     * @param list list to add
-     */
-    private void addBigList(ArrayList<BestMovieModel> list) {
-        list.add(new BestMovieModel("Spider-Man", "mysterio's Movie", 4.0f));
-        list.add(new BestMovieModel("Toy Store", "LiKE!!", 3.5f));
-        list.add(new BestMovieModel("Avengers", "Best Movie Ever", 5.0f));
-        list.add(new BestMovieModel("Goonies", "WOW!!!", 3.0f));
-        list.add(new BestMovieModel("X-men", "Best Movie", 3.0f));
-    }
-
-    /**
-     * fake list
-     *
-     * @param list list to add
-     */
-    private void addLittleList(ArrayList<BestMovieModel> list) {
-        list.add(new BestMovieModel("Star Wars", "Best Movie", 5.0f));
-        list.add(new BestMovieModel("Cars", "Cars Movie", 4.0f));
-        list.add(new BestMovieModel("Transformers", "WOW!!", 4.5f));
-        list.add(new BestMovieModel("Pets 2", "I like", 3.0f));
-        list.add(new BestMovieModel("Annabelle 3", "Like Movie", 2.5f));
+    @Override
+    public boolean autoCreateList(int typeList) {
+        return insertListMovie(AutoCreate.createInitList(typeList));
     }
 }

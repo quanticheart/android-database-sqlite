@@ -31,54 +31,37 @@
  *  *        |/_/         \===/
  *  *                       =
  *  *
- *  * Copyright(c) Developed by John Alves at 2019/7/14 at 5:51:58 for quantic heart studios
+ *  * Copyright(c) Developed by John Alves at 2019/7/15 at 3:27:56 for quantic heart studios
  *
  */
 
-package com.quanticheart.lib.dao.db;
+package com.quanticheart.lib.dao.security;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.util.Base64;
 
-import static com.quanticheart.lib.dao.util.MsgUtil.*;
+import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings("unused")
-public class Dao {
+class SecurityUtil {
 
-    private final Context context;
-    protected SQLiteDatabase db;
+    private static final String split = "::";
 
-    public Dao(Context context) {
-        this.context = context;
+    static String md5(String dataToEncrypt) {
+        String base64;
+        String key = "APPKEY";
+        String md5 = dataToEncrypt + split + key;
+
+        byte[] data1 = md5.getBytes(StandardCharsets.UTF_8);
+        base64 = Base64.encodeToString(data1, Base64.DEFAULT);
+        return base64;
     }
 
-    protected void openDataBase() {
-        SQLiteHelper helper = new SQLiteHelper(context);
-        this.db = helper.getWritableDatabase();
-    }
-
-    protected void closeDataBase() {
-        if (db != null) {
-            db.close();
-        }
-    }
-
-    protected void closeDataBase(Cursor cursor) {
-        if (cursor != null) {
-            cursor.close();
-            if (cursor.isClosed()) {
-                logI("Cursor", "CLOSED");
-            } else {
-                logI("Cursor", "NOT CLOSED");
-            }
-        } else {
-            logE("Cursor Error", "NULL!!!");
-        }
-
-        if (db != null) {
-            db.close();
-        }
+    static String md5Decode(String base64) {
+        String rawDecoded;
+        byte[] data2 = Base64.decode(base64, Base64.DEFAULT);
+        rawDecoded = new String(data2, StandardCharsets.UTF_8);
+        String[] array = rawDecoded.split(split);
+        return array[0];
     }
 
 }

@@ -31,37 +31,44 @@
  *  *        |/_/         \===/
  *  *                       =
  *  *
- *  * Copyright(c) Developed by John Alves at 2019/7/15 at 3:27:56 for quantic heart studios
+ *  * Copyright(c) Developed by John Alves at 2019/7/20 at 2:59:26 for quantic heart studios
  *
  */
 
 package com.quanticheart.lib.dao.security;
 
-import android.util.Base64;
+public class CryptoUtil {
 
-import java.nio.charset.StandardCharsets;
+    /*
+     * SecurityUtil e Decrypt code
+     */
 
-@SuppressWarnings("unused")
-public class Encrypt {
-
-    private static final String split = "::";
-
-    public static String md5(String dataToEncrypt) {
-        String base64;
-        String key = "APPKEY";
-        String md5 = dataToEncrypt + split + key;
-
-        byte[] data1 = md5.getBytes(StandardCharsets.UTF_8);
-        base64 = Base64.encodeToString(data1, Base64.DEFAULT);
-        return base64;
+    /**
+     * SecurityUtil text for database
+     *
+     * @param text for encrypt
+     * @return text or text encrypted
+     */
+    public static String encrypt(boolean encrypt, String text) {
+        if (encrypt) {
+            return SecurityUtil.md5(text);
+        } else {
+            return text;
+        }
     }
 
-    public static String md5Decode(String base64) {
-        String rawDecoded;
-        byte[] data2 = Base64.decode(base64, Base64.DEFAULT);
-        rawDecoded = new String(data2, StandardCharsets.UTF_8);
-        String[] array = rawDecoded.split(split);
-        return array[0];
+    /**
+     * Decrypt text for return
+     *
+     * @param base64 for decode
+     * @return text or text decoded
+     */
+    public static String decrypt(boolean decrypt, String base64) {
+        if (decrypt) {
+            return SecurityUtil.md5Decode(base64);
+        } else {
+            return base64;
+        }
     }
 
 }

@@ -65,7 +65,7 @@ class SQLiteHelper extends SQLiteOpenHelper {
      *
      * @param db for create
      */
-    private boolean createDatabase(SQLiteDatabase db) {
+    private void createDatabase(SQLiteDatabase db) {
         boolean b = false;
         try {
             String sb = ("CREATE TABLE IF NOT EXISTS [" + TABLE_NAME + "] (\n" +
@@ -86,7 +86,6 @@ class SQLiteHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             log("create table", e);
         }
-        return b;
     }
 
 }
