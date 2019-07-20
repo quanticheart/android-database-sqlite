@@ -52,4 +52,15 @@ public class contants {
     public static final String TITLE = "title";
     public static final String DECS = "decs";
     public static final String RATING = "rating";
+
+    //    Query
+    public static final String QUERY_CREATE_TABLE_MOVIES = "" +
+            "CREATE TABLE IF NOT EXISTS [" + TABLE_NAME + "] (\n" +
+            "  [" + ID + "] INTEGER, \n" +
+            "  [" + TITLE + "] TEXT, \n" +
+            "  [" + DECS + "] TEXT, \n" +
+            "  [" + RATING + "] TEXT, \n" +
+            "  CONSTRAINT [] PRIMARY KEY ([" + ID + "]));";
+
+    public static final String QUERY_DELETE_TABLE_MOVIES = "DROP TABLE IF EXISTS " + TABLE_NAME + ";";
 }

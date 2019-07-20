@@ -42,7 +42,7 @@
 
     <application
             android:allowBackup="false"
-            tools:ignore="GoogleAppIndexingWarning">
+            tools:ignore="GoogleAppIndexingWarning,MissingApplicationIcon">
 
     <activity
             tools:ignore="InnerclassSeparator" android:name=".test">

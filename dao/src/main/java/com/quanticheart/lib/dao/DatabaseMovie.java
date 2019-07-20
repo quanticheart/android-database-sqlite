@@ -389,7 +389,7 @@ public class DatabaseMovie extends Dao implements createFunctionDatabase {
      * @return clean is success
      */
     @Override
-    public boolean cleanTable() {
+    public boolean cleanTableMovies() {
         boolean b = false;
         openDataBase();
         try {
@@ -407,11 +407,11 @@ public class DatabaseMovie extends Dao implements createFunctionDatabase {
      * @return destroy is success
      */
     @Override
-    public boolean deleteTable() {
+    public boolean deleteTableMovies() {
         boolean b = false;
         openDataBase();
         try {
-            String[] comandos = ("DROP TABLE IF EXISTS " + TABLE_NAME + ";").split(";");
+            String[] comandos = (QUERY_DELETE_TABLE_MOVIES).split(";");
             for (String comando : comandos) {
                 db.execSQL(comando.toLowerCase());
             }
@@ -429,19 +429,11 @@ public class DatabaseMovie extends Dao implements createFunctionDatabase {
      * @return create table is success
      */
     @Override
-    public boolean createTable() {
+    public boolean createTableMovies() {
         boolean b = false;
         openDataBase();
         try {
-            String sb = ("CREATE TABLE IF NOT EXISTS [" + TABLE_NAME + "] (\n" +
-                    "  [" + ID + "] INTEGER, \n" +
-                    "  [" + TITLE + "] TEXT, \n" +
-                    "  [" + DECS + "] TEXT, \n" +
-                    "  [" + RATING + "] TEXT, \n" +
-                    "  CONSTRAINT [] PRIMARY KEY ([" + ID + "]));") +
-                    "";
-            String[] comandos = sb // for more Tables ;)
-                    .split(";");
+            String[] comandos = QUERY_CREATE_TABLE_MOVIES.split(";");
 
             for (String comando : comandos) {
                 db.execSQL(comando.toLowerCase());

@@ -98,11 +98,11 @@ public interface createFunctionDatabase {
     //
     //==============================================================================================
 
-    boolean cleanTable();
+    boolean cleanTableMovies();
 
-    boolean deleteTable();
+    boolean deleteTableMovies();
 
-    boolean createTable();
+    boolean createTableMovies();
 
     //==============================================================================================
     //

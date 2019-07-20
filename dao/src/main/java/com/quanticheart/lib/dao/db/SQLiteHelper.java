@@ -66,23 +66,11 @@ class SQLiteHelper extends SQLiteOpenHelper {
      * @param db for create
      */
     private void createDatabase(SQLiteDatabase db) {
-        boolean b = false;
         try {
-            String sb = ("CREATE TABLE IF NOT EXISTS [" + TABLE_NAME + "] (\n" +
-                    "  [" + ID + "] INTEGER, \n" +
-                    "  [" + TITLE + "] TEXT, \n" +
-                    "  [" + DECS + "] TEXT, \n" +
-                    "  [" + RATING + "] TEXT, \n" +
-                    "  CONSTRAINT [] PRIMARY KEY ([" + ID + "]));") +
-                    "";
-            String[] comandos = sb // for more Tables ;)
-                    .split(";");
-
+            String[] comandos = QUERY_CREATE_TABLE_MOVIES.split(";");
             for (String comando : comandos) {
                 db.execSQL(comando.toLowerCase());
             }
-
-            b = true;
         } catch (Exception e) {
             log("create table", e);
         }

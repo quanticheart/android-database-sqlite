@@ -89,8 +89,9 @@ public class test extends Activity {
         Log.w("--- After Deleted rows in list", base.getListMovies().toString());
 
         // After Clean all table
-        base.cleanTable();
+        base.cleanTableMovies();
         Log.w("--- After clean Table", base.getListMovies().toString());
 
+        base.createTableMovies();
     }
 }

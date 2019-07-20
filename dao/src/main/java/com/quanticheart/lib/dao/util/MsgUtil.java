@@ -60,17 +60,6 @@ public class MsgUtil {
      * @param title for init log msg
      * @param msg   Log msg
      */
-    public static void log(String title, String msg) {
-        if (BuildConfig.DEBUG)
-            Log.w(DatabaseMovie.class.getSimpleName() + ": Msg " + title, msg);
-    }
-
-    /**
-     * show simple msg in log
-     *
-     * @param title for init log msg
-     * @param msg   Log msg
-     */
     public static void logI(String title, String msg) {
         if (BuildConfig.DEBUG)
             Log.i(DatabaseMovie.class.getSimpleName() + ": Msg " + title, msg);
