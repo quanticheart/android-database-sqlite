@@ -40,6 +40,7 @@ package com.quanticheart.lib.dao.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import static com.quanticheart.lib.dao.constants.contants.*;
 import static com.quanticheart.lib.dao.util.MsgUtil.log;
@@ -57,7 +58,28 @@ class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgradeDatabse(db, oldVersion, newVersion);
         onCreate(db);
+    }
+
+    /**
+     * for update data base
+     *
+     * @param db         for update
+     * @param oldVersion old version create database
+     * @param newVersion new version database
+     */
+    private void onUpgradeDatabse(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.w("Old databese version", String.valueOf(oldVersion));
+        Log.w("new database version", String.valueOf(newVersion));
+        try {
+            String[] comandos = QUERY_CREATE_TABLE_MOVIES.split(";");
+            for (String comando : comandos) {
+                db.execSQL(comando.toLowerCase());
+            }
+        } catch (Exception e) {
+            log("create table", e);
+        }
     }
 
     /**

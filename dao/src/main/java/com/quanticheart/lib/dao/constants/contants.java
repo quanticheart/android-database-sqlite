@@ -42,7 +42,7 @@ public class contants {
 
     //    Database vesion
     public static final String DB_NAME = "movies_db";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION =2;
 
     //    Table name
     public static final String TABLE_NAME = "best_movies";
